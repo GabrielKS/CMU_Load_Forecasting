@@ -2,13 +2,26 @@ import pandas as pd
 import numpy as np
 import run_random_forest
 
-def predict(dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90):
-    load = run_random_forest.predict(dataset, [day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90])[0]
+def control(dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90):
+    return load_t_72
+
+def pi(dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90):
+    return 314.15
+
+models = {
+    "randomforest": run_random_forest.predict,
+    "control": control,
+    "pi": pi
+}
+
+def predict(dataset, model, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90):
+    return models[model](dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90)
+    #load = run_random_forest.predict(dataset, [day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90])[0]
     #load = load_t_72
     #load = 314.15
-    return load
+    #return load
 
-def simulate(dataset):
+def simulate(dataset, model):
     print("Simulating "+dataset)
     load = pd.read_csv("data/test/"+dataset+"/load.csv")
     gfs = pd.read_csv("data/test/"+dataset+"/gfs.csv")
@@ -53,7 +66,7 @@ def simulate(dataset):
             load_t_84 = load["target_load"].loc[validtime-pd.DateOffset(hours=84)]
             load_t_90 = load["target_load"].loc[validtime-pd.DateOffset(hours=90)]
 
-            prediction = predict(dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90)
+            prediction = predict(dataset, model, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90)
             results = results.append({"runtime": runtime, "validtime": validtime, "prediction": prediction}, ignore_index=True) #Possible performance improvement: append to list instead of DataFrame
     print("\tDone simulating!")
 
@@ -61,12 +74,15 @@ def simulate(dataset):
     load.drop(columns="validtime", inplace=True)
     output = results.merge(load, how="outer", left_index=True, right_index=True)
     output.dropna(inplace=True)
-    output.to_csv("results_"+dataset+".csv", index=False)
+    output.to_csv("results_"+dataset+"_"+model+".csv", index=False)
 
 def main():
-    simulate("load_1")
-    simulate("load_12")
-    simulate("load_51")
+    simulate("load_1", "control")
+    simulate("load_12", "control")
+    simulate("load_51", "control")
+    # simulate("load_1", "randomforest")
+    # simulate("load_12", "randomforest")
+    # simulate("load_51", "randomforest")
 
 if __name__ == "__main__":
     main()

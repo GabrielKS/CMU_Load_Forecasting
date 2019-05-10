@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 
-def my_evaluate_forecast(dataset):
-    print("Evaluation of forecast for dataset "+dataset+":")
-    results = pd.read_csv("results_"+dataset+".csv")
+def my_evaluate_forecast(dataset, model):
+    print("Evaluation of "+model+" forecast for dataset "+dataset+":")
+    results = pd.read_csv("results_"+dataset+"_"+model+".csv")
     results["validtime"] = pd.to_datetime(results["validtime"])
     results.index = [d.hour for d in results["validtime"]]
     mapes = []
@@ -24,9 +24,12 @@ def my_evaluate_forecast(dataset):
     #print(evaluation_metrics["hourly_metrics"]) #Note: the hourly RMSE given to me is broken (it doesn't square the errors)
 
 def main():
-    my_evaluate_forecast("load_1")
-    my_evaluate_forecast("load_12")
-    my_evaluate_forecast("load_51")
+    my_evaluate_forecast("load_1", "control")
+    my_evaluate_forecast("load_12", "control")
+    my_evaluate_forecast("load_51", "control")
+    my_evaluate_forecast("load_1", "randomforest")
+    my_evaluate_forecast("load_12", "randomforest")
+    my_evaluate_forecast("load_51", "randomforest")
 
 if __name__ == "__main__":
     main()

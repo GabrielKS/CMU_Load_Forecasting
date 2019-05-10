@@ -1,6 +1,4 @@
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 
 def filter_for_most_valid(df):  #Only use the most recent data. May want to change a bit since the last two hours need to use the second-most recent data in reality.
     # rows = df.index
@@ -33,33 +31,43 @@ def filter_for_most_valid(df):  #Tried to make it faster. May have ended up slow
     print(len(fdf))
     return pd.DataFrame(fdf)
 """
+def collate_input(dataset):
+    print("Collating "+dataset)
+    load = pd.read_csv("data/train/"+dataset+"/load.csv")
+    gfs = pd.read_csv("data/train/"+dataset+"/gfs.csv")
+    nam = pd.read_csv("data/train/"+dataset+"/nam.csv")
 
-load = pd.read_csv("data/train/load_1/load.csv")
-gfs = pd.read_csv("data/train/load_1/gfs.csv")
-nam = pd.read_csv("data/train/load_1/nam.csv")
 
+    if (False): #Limit data for faster testing
+        limit = 100
+        load = load.iloc[:limit]
+        gfs = gfs.iloc[:limit]
+        nam = nam.iloc[:limit]
 
-if (False): #Limit data for faster testing
-    limit = 100
-    load = load.iloc[:limit]
-    gfs = gfs.iloc[:limit]
-    nam = nam.iloc[:limit]
+    load.index = load["validtime"]
+    gfs = filter_for_most_valid(gfs)
+    nam = filter_for_most_valid(nam)
+    #print(gfs)
+    #print("filtered")
 
-load.index = load["validtime"]
-gfs = filter_for_most_valid(gfs)
-nam = filter_for_most_valid(nam)
-#print(gfs)
-#print("filtered")
+    gfs = gfs.drop(columns="validtime")   #Eliminate duplicate validtimes
+    nam = nam.drop(columns="validtime")
 
-gfs = gfs.drop(columns="validtime")   #Eliminate duplicate validtimes
-nam = nam.drop(columns="validtime")
+    gfs = gfs.drop(columns="runtime")   #Let's ignore the runtime (for now?)
+    nam = nam.drop(columns="runtime")
 
-gfs = gfs.drop(columns="runtime")   #Let's ignore the runtime (for now?)
-nam = nam.drop(columns="runtime")
+    gfs.columns = "GFS_"+gfs.columns
+    nam.columns = "NAM_"+nam.columns
 
-gfs.columns = "GFS_"+gfs.columns
-nam.columns = "NAM_"+nam.columns
+    all_data = load.merge(gfs, how="outer", left_index=True, right_index=True).merge(nam, how="outer", left_index=True, right_index=True)
+    all_data.dropna(inplace=True)   #Ignore instances where some of the data is missing
+    all_data.to_csv("collated_training_input_"+dataset+".csv", index=False)
+    return all_data
 
-all_data = load.merge(gfs, how="outer", left_index=True, right_index=True).merge(nam, how="outer", left_index=True, right_index=True)
-all_data.dropna(inplace=True)   #Ignore instances where some of the data is missing
-all_data.to_csv("collated_training_input.csv")
+def main():
+    collate_input("load_1")
+    collate_input("load_12")
+    collate_input("load_51")
+
+if __name__ == "__main__":
+    main()

@@ -3,6 +3,8 @@ import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from joblib import numpy_pickle
 
+variables = ["day_cos", "day_sin", "hour_cos", "hour_sin", "GFS_temp", "NAM_temp", "GFS_hum", "NAM_dew", "load_t_72", "load_t_78", "load_t_84", "load_t_90"]
+
 def train(dataset):
     print("Training with "+dataset)
     data = pd.read_csv("processed_training_input_"+dataset+".csv")
@@ -14,8 +16,7 @@ def train(dataset):
     data["hour_cos"] = np.cos(data["hour"]*2*np.pi/24)
 
     dependent = np.array(data["load"])
-    data = data[["day_cos", "day_sin", "hour_cos", "hour_sin", "GFS_temp", "NAM_temp", "GFS_hum", "NAM_dew", "load_t_72", "load_t_78", "load_t_84", "load_t_90"]]
-    variables = list(data.columns)
+    data = data[variables]
     independent = np.array(data)
 
     rf = RandomForestRegressor(n_estimators=100, random_state=0)
@@ -37,6 +38,12 @@ def predict(dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72,
     hour_cos = np.cos(hour*2*np.pi/24)
     return rf[dataset].predict([[day_cos, day_sin, hour_cos, hour_sin]+[GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90]])[0]
 
+def print_importances(dataset):
+    if not dataset in rf:
+        load(dataset)
+    importances = list(zip(variables, rf[dataset].feature_importances_))
+    print(importances)
+
 def main():
     train("load_1")
     train("load_12")
@@ -44,3 +51,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # print_importances("load_1")
+    # print_importances("load_12")
+    # print_importances("load_51")

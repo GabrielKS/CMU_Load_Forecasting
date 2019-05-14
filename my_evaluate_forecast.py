@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 def my_evaluate_forecast(dataset, model):
     print("Evaluation of "+model+" forecast for dataset "+dataset+":")
@@ -24,12 +25,27 @@ def my_evaluate_forecast(dataset, model):
     #print(evaluation_metrics["hourly_metrics"]) #Note: the hourly RMSE given to me is broken (it doesn't square the errors)
 
 def main():
-    my_evaluate_forecast("load_1", "control")
-    my_evaluate_forecast("load_12", "control")
-    my_evaluate_forecast("load_51", "control")
-    my_evaluate_forecast("load_1", "randomforest")
-    my_evaluate_forecast("load_12", "randomforest")
-    my_evaluate_forecast("load_51", "randomforest")
+    datasets = ["load_1", "load_12", "load_51"]
+    models = ["randomforest", "MLP"]
+    for model in models:
+        for dataset in datasets:
+            my_evaluate_forecast(dataset, model)
+            print()
+    return
+    figure = 1
+    for dataset in datasets:
+        plt.figure(figure)
+        actuals = pd.read_csv("results_" + dataset + "_control.csv")
+        actuals["validtime"] = pd.to_datetime(actuals["validtime"])
+        plt.plot(actuals["validtime"], actuals["target_load"], zorder=100)
+        for model in models:
+            results = pd.read_csv("results_" + dataset + "_" + model + ".csv")
+            results["validtime"] = pd.to_datetime(results["validtime"])
+            results.rename(columns={"prediction": "prediction_"+model}, inplace=True)
+            plt.plot(results["validtime"], results["prediction_"+model])
+        figure += 1
+        plt.legend()
+        plt.show()
 
 if __name__ == "__main__":
     main()

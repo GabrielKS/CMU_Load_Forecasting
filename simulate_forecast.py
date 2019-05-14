@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import run_random_forest
+import run_MLP
 
 def control(dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90):
     return load_t_72
@@ -11,7 +12,8 @@ def pi(dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load
 models = {
     "randomforest": run_random_forest.predict,
     "control": control,
-    "pi": pi
+    "pi": pi,
+    "MLP": run_MLP.predict
 }
 
 def predict(dataset, model, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90):
@@ -77,12 +79,10 @@ def simulate(dataset, model):
     output.to_csv("results_"+dataset+"_"+model+".csv", index=False)
 
 def main():
-    simulate("load_1", "control")
-    simulate("load_12", "control")
-    simulate("load_51", "control")
-    # simulate("load_1", "randomforest")
-    # simulate("load_12", "randomforest")
-    # simulate("load_51", "randomforest")
+    model = "MLP"
+    simulate("load_1", model)
+    simulate("load_12", model)
+    simulate("load_51", model)
 
 if __name__ == "__main__":
     main()

@@ -61,7 +61,7 @@ def collate_input(dataset):
 
     all_data = load.merge(gfs, how="outer", left_index=True, right_index=True).merge(nam, how="outer", left_index=True, right_index=True)
     all_data.dropna(inplace=True)   #Ignore instances where some of the data is missing
-    all_data.to_csv("collated_training_input_"+dataset+".csv", index=False)
+    all_data.to_csv("intermediate/collated_training_input_"+dataset+".csv", index=False)
     return all_data
 
 def main():

@@ -7,7 +7,7 @@ variables = ["day_cos", "day_sin", "hour_cos", "hour_sin", "GFS_temp", "NAM_temp
 
 def train(dataset):
     print("Training with "+dataset)
-    data = pd.read_csv("processed_training_input_"+dataset+".csv")
+    data = pd.read_csv("intermediate/processed_training_input_"+dataset+".csv")
     data = data.drop(columns=data.columns[0])
 
     data["day_sin"] = np.sin(data["day"]*2*np.pi/365)
@@ -22,12 +22,12 @@ def train(dataset):
     rf = RandomForestRegressor(n_estimators=100, random_state=0)
     rf.fit(independent, dependent)
     print("\tTrained! Serializing.")
-    numpy_pickle.dump(rf, "randomforest_"+dataset+".joblib")
+    numpy_pickle.dump(rf, "models/randomforest_"+dataset+".joblib")
 
 rf = {}
 def load(dataset):
     print("Loading model for "+dataset)
-    rf[dataset] = numpy_pickle.load("randomforest_"+dataset+".joblib")
+    rf[dataset] = numpy_pickle.load("models/randomforest_"+dataset+".joblib")
 
 def predict(dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90):
     if not dataset in rf:

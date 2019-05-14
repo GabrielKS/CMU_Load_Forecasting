@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 def my_evaluate_forecast(dataset, model):
     print("Evaluation of "+model+" forecast for dataset "+dataset+":")
-    results = pd.read_csv("results_"+dataset+"_"+model+".csv")
+    results = pd.read_csv("results/results_"+dataset+"_"+model+".csv")
     results["validtime"] = pd.to_datetime(results["validtime"])
     results.index = [d.hour for d in results["validtime"]]
     mapes = []
@@ -35,11 +35,11 @@ def main():
     figure = 1
     for dataset in datasets:
         plt.figure(figure)
-        actuals = pd.read_csv("results_" + dataset + "_control.csv")
+        actuals = pd.read_csv("results/results_" + dataset + "_control.csv")
         actuals["validtime"] = pd.to_datetime(actuals["validtime"])
         plt.plot(actuals["validtime"], actuals["target_load"], zorder=100)
         for model in models:
-            results = pd.read_csv("results_" + dataset + "_" + model + ".csv")
+            results = pd.read_csv("results/results_" + dataset + "_" + model + ".csv")
             results["validtime"] = pd.to_datetime(results["validtime"])
             results.rename(columns={"prediction": "prediction_"+model}, inplace=True)
             plt.plot(results["validtime"], results["prediction_"+model])

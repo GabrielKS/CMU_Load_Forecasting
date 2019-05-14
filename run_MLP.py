@@ -8,7 +8,7 @@ variables = ["day_cos", "day_sin", "hour_cos", "hour_sin", "GFS_temp", "NAM_temp
 
 def train(dataset):
     print("Training with "+dataset)
-    data = pd.read_csv("processed_training_input_"+dataset+".csv")
+    data = pd.read_csv("intermediate/processed_training_input_"+dataset+".csv")
     data = data.drop(columns=data.columns[0])
 
     data["day_sin"] = np.sin(data["day"]*2*np.pi/365)
@@ -24,14 +24,14 @@ def train(dataset):
     model.add(Dense(500, activation = "relu", input_dim = len(variables)))
     model.add(Dense(1))
     model.compile(loss = "mse", optimizer = "adam")
-    model.fit(independent, dependent, epochs = 100, batch_size = 100)
+    model.fit(independent, dependent, epochs = 100, batch_size = 100, verbose=False)
     print("\tTrained! Serializing.")
-    model.save("MLP_"+dataset+".h5")
+    model.save("models/MLP_"+dataset+".h5")
 
 models = {}
 def load(dataset):
     print("Loading model for "+dataset)
-    models[dataset] = load_model("MLP_"+dataset+".h5")
+    models[dataset] = load_model("models/MLP_"+dataset+".h5")
 
 def predict(dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90):
     if not dataset in models:

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 def visualize_input(dataset):
-    input = pd.read_csv("processed_training_input_"+dataset+".csv")
+    input = pd.read_csv("intermediate/processed_training_input_"+dataset+".csv")
 
     def scatterplot(label):
         plt.scatter(input[label], input["load"], s=1)

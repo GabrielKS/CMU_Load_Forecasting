@@ -2,7 +2,7 @@ import pandas as pd
 
 def process_input(dataset):
     print("Processing "+dataset)
-    raw = pd.read_csv("collated_training_input_"+dataset+".csv")
+    raw = pd.read_csv("intermediate/collated_training_input_"+dataset+".csv")
 
     #Make sense of the times
     raw["validtime"] = pd.to_datetime(raw["validtime"])
@@ -29,7 +29,7 @@ def process_input(dataset):
         processed[label] = delayed
 
     processed.dropna(inplace=True)
-    processed.to_csv("processed_training_input_"+dataset+".csv")
+    processed.to_csv("intermediate/processed_training_input_"+dataset+".csv")
     return processed
 
 

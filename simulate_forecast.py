@@ -76,13 +76,14 @@ def simulate(dataset, model):
     load.drop(columns="validtime", inplace=True)
     output = results.merge(load, how="outer", left_index=True, right_index=True)
     output.dropna(inplace=True)
-    output.to_csv("results_"+dataset+"_"+model+".csv", index=False)
+    output.to_csv("results/results_"+dataset+"_"+model+".csv", index=False)
 
-def main():
-    model = "MLP"
-    simulate("load_1", model)
-    simulate("load_12", model)
-    simulate("load_51", model)
+def main(models=("MLP")):
+    datasets = ("load_1", "load_12", "load_51")
+    models = ("control", "randomforest", "MLP")
+    for model in models:
+        for dataset in datasets:
+            simulate(dataset, model)
 
 if __name__ == "__main__":
     main()

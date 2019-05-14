@@ -1,7 +1,7 @@
 import pandas as pd
-import numpy as np
 import run_random_forest
 import run_MLP
+import run_ensemble
 
 def control(dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90):
     return load_t_72
@@ -9,22 +9,23 @@ def control(dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72,
 def pi(dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90):
     return 314.15
 
-models = {
-    "randomforest": run_random_forest.predict,
+modeldefs = {
     "control": control,
     "pi": pi,
-    "MLP": run_MLP.predict
+    "randomforest": run_random_forest.predict,
+    "MLP": run_MLP.predict,
+    "ensemble": run_ensemble.predict
 }
 
 def predict(dataset, model, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90):
-    return models[model](dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90)
+    return modeldefs[model](dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90)
     #load = run_random_forest.predict(dataset, [day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90])[0]
     #load = load_t_72
     #load = 314.15
     #return load
 
 def simulate(dataset, model):
-    print("Simulating "+dataset)
+    print("Simulating "+dataset+" with "+model)
     load = pd.read_csv("data/test/"+dataset+"/load.csv")
     gfs = pd.read_csv("data/test/"+dataset+"/gfs.csv")
     nam = pd.read_csv("data/test/"+dataset+"/nam.csv")
@@ -78,9 +79,9 @@ def simulate(dataset, model):
     output.dropna(inplace=True)
     output.to_csv("results/results_"+dataset+"_"+model+".csv", index=False)
 
-def main(models=("MLP")):
+def main(models=("ensemble",)):
     datasets = ("load_1", "load_12", "load_51")
-    models = ("control", "randomforest", "MLP")
+    #models = ("control", "randomforest", "MLP")
     for model in models:
         for dataset in datasets:
             simulate(dataset, model)

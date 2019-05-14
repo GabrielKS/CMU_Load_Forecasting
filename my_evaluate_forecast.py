@@ -26,7 +26,7 @@ def my_evaluate_forecast(dataset, model):
 
 def main():
     datasets = ["load_1", "load_12", "load_51"]
-    models = ["randomforest", "MLP"]
+    models = ["randomforest", "MLP", "ensemble"]
     for model in models:
         for dataset in datasets:
             my_evaluate_forecast(dataset, model)

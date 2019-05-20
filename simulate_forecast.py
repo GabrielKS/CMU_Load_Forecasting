@@ -1,6 +1,8 @@
 import pandas as pd
+
 import run_random_forest
 import run_MLP
+import run_SVM
 import run_ensemble
 
 def control(dataset, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90):
@@ -14,7 +16,8 @@ modeldefs = {
     "pi": pi,
     "randomforest": run_random_forest.predict,
     "MLP": run_MLP.predict,
-    "ensemble": run_ensemble.predict
+    "SVM": run_SVM.predict,
+    "ensemble": run_ensemble.predict,
 }
 
 def predict(dataset, model, day, hour, GFS_temp, NAM_temp, GFS_hum, NAM_dew, load_t_72, load_t_78, load_t_84, load_t_90):
@@ -79,7 +82,7 @@ def simulate(dataset, model):
     output.dropna(inplace=True)
     output.to_csv("results/results_"+dataset+"_"+model+".csv", index=False)
 
-def main(models=("ensemble",)):
+def main(models=("SVM",)):
     datasets = ("load_1", "load_12", "load_51")
     #models = ("control", "randomforest", "MLP")
     for model in models:

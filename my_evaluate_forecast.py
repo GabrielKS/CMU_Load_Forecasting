@@ -16,9 +16,9 @@ def my_evaluate_forecast(dataset, model):
     actuals = results["target_load"]
     mape = np.mean(100 * abs(predictions-actuals)/actuals)
     rmse = np.sqrt(np.mean(np.power(predictions-actuals, 2)))
-    print("MAPEs by hour:")
-    print(mapes)
-    print("Total MAPE: "+str(mape))
+    # print("MAPEs by hour:")
+    # print(mapes)
+    # print("Total MAPE: "+str(mape))
     print("Total RMSE: "+str(rmse))
 
     #evaluation_metrics = evaluate_forecast.evaluate_forecast(results[["runtime", "validtime", "prediction"]], results[["validtime", "target_load"]])
@@ -26,7 +26,7 @@ def my_evaluate_forecast(dataset, model):
 
 def main():
     datasets = ["load_1", "load_12", "load_51"]
-    models = ["randomforest", "MLP", "ensemble"]
+    models = ["control", "randomforest", "MLP", "ensemble", "SVM"]
     for model in models:
         for dataset in datasets:
             my_evaluate_forecast(dataset, model)

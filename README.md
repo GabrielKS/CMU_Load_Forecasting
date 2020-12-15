@@ -1,13 +1,5 @@
-# Load forecasting test harness
+# CMU_Load_Forecasting
+## By Gabriel Konar-Steenberg
+This project, completed during a one-month mentorship with Ken Williams at NextEra Analytics in spring 2019, was my first foray into machine learning. I was quite new to the field — I had to learn everything from the ```pandas``` library to what a random forest model is.
 
-This package simulates real-time load forecasting
-test data, and facilitates testing with known data-availability
-constraints.
-
-## Installation
-
-To install the package, run 
-
-`python setup.py install`
-
-within the top-level directory of the package source.
+The task, first presented at a Carnegie Mellon hackathon: to forecast the electrical power consumption of a city such as Boston given the weather, date, time, and some information about the power consumption in the past. Ultimately, I developed prediction algorithms using a random forest model, an SVM, and a simple neural network. I was able to get better results with each of these than my "control," which was simply guessing that the power consumption would be the same as 72 hours ago.
